@@ -1,0 +1,26 @@
+version: "3"
+services:
+  app:
+    image: golang:1.21.1
+    volumes:
+    - ./src:/usr/src/job
+    ports:
+    - "8080:8080"
+    working_dir: /usr/src/job
+    command: sleep infinity
+  db:
+    image: mariadb:lts
+    environment:
+      - MARIADB_ROOT_PASSWORD=dev
+      - MARIADB_DATABASE=test_db
+      - MARIADB_USER=test_user
+      - MARIADB_PASSWORD=test_password
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+    - 8090:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=dev
