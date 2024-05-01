@@ -1,12 +1,12 @@
 version: "3"
 services:
   app:
-    image: golang:1.21.1
+    image: golang:1.22.2
     volumes:
-    - ./src:/usr/src/job
+    - ./:/app
     ports:
     - "8080:8080"
-    working_dir: /usr/src/job
+    working_dir: /app
     command: sleep infinity
   db:
     image: mariadb:lts
