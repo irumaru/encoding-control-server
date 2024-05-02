@@ -9,6 +9,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
+	"github.com/irumaru/encoding-control-server/config"
 	"github.com/irumaru/encoding-control-server/scheduler"
 )
 
@@ -48,7 +49,13 @@ type JobRequest struct {
 }
 
 func dbInit() *gorm.DB {
-	dsn := "test_user:test_password@tcp(db:3306)/test_db?charset=utf8mb4&parseTime=true"
+	user := config.Cfg.Db_user
+	password := config.Cfg.Db_password
+	host := config.Cfg.Db_host
+	port := config.Cfg.Db_port
+	dbname := config.Cfg.Db_name
+
+	dsn := user + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbname + "?charset=utf8mb4&parseTime=true"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
@@ -59,6 +66,11 @@ func dbInit() *gorm.DB {
 var db *gorm.DB
 
 func main() {
+	// LoadConfig
+	if err := config.LoadConfig(); err != nil {
+		log.Fatalf("failed load config: %v", err)
+	}
+
 	// DB connect
 	db = dbInit()
 
