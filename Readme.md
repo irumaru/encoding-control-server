@@ -22,10 +22,12 @@ Jobを作成する際はREST API経由でQueueに追加する。
 ### Jobの実行
 
 実行可能なJobがある場合、Jobを実行する。
+実行時にStatusを更新する。
 
 ### Jobの完了
 
 Jobの実行が完了した場合、完了マークとする。
+完了時にStatusを更新する。
 
 ## Route
 
@@ -36,22 +38,23 @@ Jobの実行が完了した場合、完了マークとする。
   - POST　ランナーを追加
 - /api/v1/runner/:id
   - POST　ランナーを更新
-
-### Route/Runner/Job
-
-- /api/v1/runner/:id/job
-  - GET　実行可能なJobを取得
-- /api/v1/runner/:id/job/:id
-  - POST　JobのStatusを更新
-    - Running
-    - Completion
-    - Error
+  - DELETE　ランナーを削除
 
 ### Route/Job
 
 - /api/v1/job
   - GET　Job一覧を取得
   - POST　Jobを追加
+- /api/v1/job/:id
+  - POST　Jobを更新
+  - DELETE　Jobを削除
+
+### Route/Runner/Job
+
+Runnerごとに、スケジュールされたJobを取得
+
+- /api/v1/runner/:id/job
+  - GET　スケジュールされたJobを取得
 
 ## 状態
 
@@ -66,7 +69,7 @@ Job実行ノード
   - -127～127 優先順位
 - Status
   - Ready
-  - Maintenance
+  - Drop
   - Error
 - Name
 
@@ -86,6 +89,7 @@ Queueに追加されたJob
   - Completion
   - Error
 - Kind
+  - EpgStation
 - Option
-- Runner
+- RunnerID
 - Name
