@@ -43,7 +43,7 @@ func Controller(db *gorm.DB) {
 
 	// Schedule可能なRunnerを探す
 	runner := []Runner{}
-	if result := db.Raw("SELECT * FROM runners WHERE status = 'Ready' AND id NOT IN (SELECT runner_id FROM jobs WHERE status = 'Scheduled' OR status = 'Running') ORDER BY priority DESC LIMIT 1").
+	if result := db.Raw("SELECT * FROM runners WHERE status = 'Ready' AND id NOT IN (SELECT runner_id FROM jobs WHERE status = 'Scheduled' OR status = 'Running') ORDER BY priority DESC, created_at ASC LIMIT 1").
 		Scan(&runner); result.Error != nil {
 		log.Printf("Failed to get runner: %v", result.Error)
 	}

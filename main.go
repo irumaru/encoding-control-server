@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"strconv"
 	"time"
@@ -191,6 +192,9 @@ func main() {
 			log.Fatalf("failed create runner: %v", result.Error)
 		}
 
+		bytes, _ := json.Marshal(job)
+		log.Printf("job: %v", string(bytes))
+
 		return c.JSON(200, job)
 	})
 	e.POST("/api/v1/job/:id", func(c echo.Context) error {
@@ -211,6 +215,7 @@ func main() {
 		job := Job{}
 		job.ID = jobId
 		job.Priority = jobReq.Priority
+		job.Status = jobReq.Status
 		job.Kind = jobReq.Kind
 		job.Option = jobReq.Option
 		job.Name = jobReq.Name
@@ -218,6 +223,10 @@ func main() {
 		if result := db.Model(&job).Updates(job); result.Error != nil || result.RowsAffected != 1 {
 			log.Fatalf("failed create runner: %v", result.Error)
 		}
+
+		bytes, _ := json.Marshal(job)
+		log.Printf("job: %v", string(bytes))
+
 		return c.JSON(200, job)
 	})
 	e.DELETE("/api/v1/job/:id", func(c echo.Context) error {
@@ -249,7 +258,7 @@ func main() {
 		}
 
 		job := Job{}
-		if result := db.Where("runner_id = ?", id).Find(&job); result.Error != nil {
+		if result := db.Where("runner_id = ?", id).Where("status = ?", "scheduled").Find(&job); result.Error != nil {
 			log.Fatalf("failed query runner: %v", result.Error)
 		}
 
@@ -257,5 +266,5 @@ func main() {
 	})
 
 	// Start server
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":80"))
 }
